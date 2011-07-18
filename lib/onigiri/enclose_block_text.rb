@@ -4,7 +4,7 @@ module Onigiri
     dupe = Nokogiri::XML::DocumentFragment.parse text
     strict_tags = {"noscript" => 1, "form" => 1, "blockquote" => 1}
     dupe.traverse do |elem|
-      if strict_tags[elem.name]
+      if strict_tags[elem.name.downcase]
         elem.children.each do |target|
           if target.text?
             target.add_previous_sibling "<p>#{target.content.strip}</p>"
