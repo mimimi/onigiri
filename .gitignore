@@ -3,5 +3,5 @@
 Gemfile.lock
 pkg/*
 .rspec
-.rvmrv
+.rvmrc
 *.swp
