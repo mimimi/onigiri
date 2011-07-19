@@ -47,9 +47,33 @@ describe Onigiri do
     it 'should all work together' do
       fix_backslash('<a href="http:\\\\google.com/">link</a><link rel="stylesheet" type="text/css" href="http:\\\\bing.com\\"><img src="http://imagehosting.com\\3/image.png" longdesc="http:\\/alt.com\\desc.txt"><form action="\\application.php">русский текст</form>').should == '<a href="http://google.com/">link</a><link rel="stylesheet" type="text/css" href="http://bing.com/"><img src="http://imagehosting.com/3/image.png" longdesc="http://alt.com/desc.txt"><form action="/application.php">русский текст</form>'
     end
+
+    it 'is fixing href attributes (Nokogiri::HTML::DocumentFragment)' do
+      fix_backslash(Nokogiri::HTML::DocumentFragment.parse '<a href="http:\\\\google.com/">http:\\\\google.com/</a><link rel="stylesheet" type="text/css" href="http:\\\\bing.com\\">').should == '<a href="http://google.com/">http:\\\\google.com/</a><link rel="stylesheet" type="text/css" href="http://bing.com/">'
+    end
+
+    it 'is fixing src attributes (Nokogiri::HTML::DocumentFragment)' do
+      fix_backslash(Nokogiri::HTML::DocumentFragment.parse '<img src="http:\\/imagehosting.com/3\\image.png">').should == '<img src="http://imagehosting.com/3/image.png">'
+    end
+
+    it 'is fixing longdesc attributes (Nokogiri::HTML::DocumentFragment)' do
+      fix_backslash(Nokogiri::HTML::DocumentFragment.parse '<img src="http://imagehosting.com/3/image.png" longdesc="http:\\/alt.com\\desc.txt">').should == '<img src="http://imagehosting.com/3/image.png" longdesc="http://alt.com/desc.txt">'
+    end
+
+    it 'is fixing form action attributes (Nokogiri::HTML::DocumentFragment)' do
+      fix_backslash(Nokogiri::HTML::DocumentFragment.parse '<form action="\\application.php">\\application.php</form>').should == '<form action="/application.php">\\application.php</form>'
+    end
+
+    it 'should all work together (Nokogiri::HTML::DocumentFragment)' do
+      fix_backslash(Nokogiri::HTML::DocumentFragment.parse '<a href="http:\\\\google.com/">link</a><link rel="stylesheet" type="text/css" href="http:\\\\bing.com\\"><img src="http://imagehosting.com\\3/image.png" longdesc="http:\\/alt.com\\desc.txt"><form action="\\application.php">русский текст</form>').should == '<a href="http://google.com/">link</a><link rel="stylesheet" type="text/css" href="http://bing.com/"><img src="http://imagehosting.com/3/image.png" longdesc="http://alt.com/desc.txt"><form action="/application.php">русский текст</form>'
+    end
+  end
+
+  it 'should provide a "show_body_only" method that extracts contents of a <body> element for incorporation' do
+    show_body_only('<body>some text<form>some text in form</form><p>some text in p</p><div><blockquote>some text in third level element</blockquote></div></body>').gsub(/(\r|\n)/, '').gsub(/> *</, '><').should == 'some text<form>some text in form</form><p>some text in p</p><div><blockquote>some text in third level element</blockquote></div>'
   end
 
   #"drop-proprietary-attributes"=>true
-  #"fix-backslash"=>true, "show-body-only"=>"y", "merge-divs"=>"y", "merge-spans"=>"y", "hide-comments"=>true,
+  #"show-body-only"=>"y", "merge-divs"=>"y", "merge-spans"=>"y", "hide-comments"=>true,
   #"char-encoding"=>"utf8", "output-bom" => 'n'
 end
