@@ -27,9 +27,9 @@ describe Onigiri do
     enclose_text(Nokogiri::HTML::DocumentFragment.parse '<body>some text<form>some text in form</form><p>some text in p</p><div><blockquote>some text in third level element</blockquote></div></body>').gsub(/(\r|\n)/, '').gsub(/> *</, '><').should == '<body><p>some text</p><form>some text in form</form><p>some text in p</p><div><blockquote>some text in third level element</blockquote></div></body>'
   end
 
-  pending 'should define "fix_backslash" method that fixes "\" for "/" in urls' do
+  describe 'should define "fix_backslash" method that fixes "\" for "/" in urls' do
     it 'is fixing href attributes' do
-      fix_backslash('<a href="http:\\\\google.com/">link</a><link rel="stylesheet" type="text/css" href="http:\\\\bing.com\\">').should == '<a href="http://google.com/">link</a><link rel="stylesheet" type="text/css" href="http://bing.com/">'
+      fix_backslash('<a href="http:\\\\google.com/">http:\\\\google.com/</a><link rel="stylesheet" type="text/css" href="http:\\\\bing.com\\">').should == '<a href="http://google.com/">http:\\\\google.com/</a><link rel="stylesheet" type="text/css" href="http://bing.com/">'
     end
 
     it 'is fixing src attributes' do
@@ -41,7 +41,11 @@ describe Onigiri do
     end
 
     it 'is fixing form action attributes' do
-      fix_backslash('<form action="\\application.php"></form>').should == '<form action="/application.php"></form>'
+      fix_backslash('<form action="\\application.php">\\application.php</form>').should == '<form action="/application.php">\\application.php</form>'
+    end
+
+    it 'should all work together' do
+      fix_backslash('<a href="http:\\\\google.com/">link</a><link rel="stylesheet" type="text/css" href="http:\\\\bing.com\\"><img src="http://imagehosting.com\\3/image.png" longdesc="http:\\/alt.com\\desc.txt"><form action="\\application.php">русский текст</form>').should == '<a href="http://google.com/">link</a><link rel="stylesheet" type="text/css" href="http://bing.com/"><img src="http://imagehosting.com/3/image.png" longdesc="http://alt.com/desc.txt"><form action="/application.php">русский текст</form>'
     end
   end
 
