@@ -4,8 +4,10 @@ module Onigiri
   class Document
     def enclose_text
       dupe = dup
-      dupe.css('body').children.each do |target|
-        if target.text? || target.description.inline?
+      body = dupe.css('body').children
+      body = dupe.children if body.empty?
+      body.each do |target|
+        if target.parent && (target.text? || target.description.inline?)
           wrap = target.add_previous_sibling("<p>")[0]
           wrap << target.unlink
         end
