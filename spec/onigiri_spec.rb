@@ -186,6 +186,5 @@ HTML
     pending('Noted the difference between merge-divs: yes/auto, but the latter one doesn\'t get priority')
   end
 
-  #"drop-proprietary-attributes"=>true
-  #"hide-comments"=>true,
+  it 'should provide "drop-proprietary-attributes" method that will drop all attributes, not defined in W3C standard or applied to mismatched element'
 end
