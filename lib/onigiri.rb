@@ -20,7 +20,14 @@ module Onigiri
   end
 
   class Document < Nokogiri::HTML::DocumentFragment
-
+    class << self
+      def parse(tags)
+        # Remove formatting whitespaces
+        # Those do not represent any data while messing up the tree
+        tags = tags.gsub(/(\r|\n)/, '').gsub(/> *</, '><')
+        super
+      end
+    end
   end
 
   private
@@ -40,3 +47,4 @@ require "onigiri/enclose_block_text"
 require "onigiri/enclose_text"
 require "onigiri/fix_backslash"
 require "onigiri/show_body_only"
+require "onigiri/merge_divs"

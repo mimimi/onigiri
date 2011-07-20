@@ -1,6 +1,6 @@
 # encoding: utf-8
 module Onigiri
-  register_handler(:drop_empty_paras)
+  register_handler :drop_empty_paras
   class Document
     def drop_empty_paras
       dupe = dup

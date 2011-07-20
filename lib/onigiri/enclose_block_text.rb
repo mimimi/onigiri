@@ -1,6 +1,6 @@
 # encoding: utf-8
 module Onigiri
-  register_handler(:enclose_block_text)
+  register_handler :enclose_block_text
   class Document
     def enclose_block_text
       dupe = dup

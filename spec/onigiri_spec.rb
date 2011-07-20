@@ -13,7 +13,7 @@ describe Onigiri do
 
   it 'should define "drop_empty_paras" method that removes empty paragraphs from argument string' do
     input = 'this is text with <p>some </p><p></p> <p>emptyness inside</p>'
-    expectation = 'this is text with <p>some </p> <p>emptyness inside</p>'
+    expectation = 'this is text with <p>some </p><p>emptyness inside</p>'
     Onigiri::clean(input, :drop_empty_paras).should == expectation
   end
 
@@ -65,6 +65,61 @@ describe Onigiri do
     input = '<body>some text<form>some text in form</form><p>some text in p</p><div><blockquote>some text in third level element</blockquote></div></body>'
     expectation = 'some text<form>some text in form</form><p>some text in p</p><div><blockquote>some text in third level element</blockquote></div>'
     Onigiri::clean(input, :show_body_only).gsub(/(\r|\n)/, '').gsub(/> *</, '><').should == expectation
+  end
+
+  it 'should provide a "merge_divs" method that will merge nested <div> such as "<div><div>...</div></div>" into top-level div discarding inner <div>s attributes except for "class" and "style"' do
+    input = <<HTML
+<div class="first">
+  <div class="top">
+    <div id ="!hoho" class="test">
+      <div data-remote="true" style="color: black;" class="tost">
+        <p>data</p>
+        <div>
+          <div class="yopo">
+            another text
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+HTML
+    expectation = <<HTML
+<div class="first top test tost" style="color: black;">
+<p>data</p>
+<div class="yopo">another text</div>
+</div>
+HTML
+    Onigiri::clean(input, :merge_divs).gsub(/(\r|\n)/, '').gsub(/> *</, '><').gsub(/(>) +| +(<)/, '\1\2').should == expectation.gsub(/(\r|\n)/, '').gsub(/> *</, '><').gsub(/(>) +| +(<)/, '\1\2')
+    Onigiri::clean(input, :merge_divs).gsub(/(\r|\n)/, '').gsub(/> *</, '><').gsub(/(>) +| +(<)/, '\1\2').should == expectation.gsub(/(\r|\n)/, '').gsub(/> *</, '><').gsub(/(>) +| +(<)/, '\1\2')
+  end
+
+  it 'should provide a "automerge_divs" method that will merge nested <div> such as "<div><div>...</div></div>" into top-level div moving inner <div>s attributes into outer one; however it shouldnt merge together <div>s that have valid id attributes (id attribute serves as a down-top merge breakpoint)' do
+    input = <<HTML
+<div class="first">
+  <div class="top" id="fff">
+    <div id ="!hoho" class="test">
+      <div data-remote="true" style="color: black;" class="tost">
+        <p>data</p>
+        <div>
+          <div id="yopo">
+            another text
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+HTML
+    expectation = <<HTML
+<div class="first top" id="fff">
+<div id="!hoho" class="test tost c1" data-remote="true">
+<p>data</p>
+<div id="yopo">another text</div>
+</div>
+</div>
+HTML
+    pending('Noted the difference between merge-divs: yes/auto, but the latter one doesn\'t get priority')
   end
 
   #"drop-proprietary-attributes"=>true
