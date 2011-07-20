@@ -119,6 +119,43 @@ HTML
     Onigiri::clean(input, :merge_spans).gsub(/(\r|\n)/, '').gsub(/> *</, '><').gsub(/(>) +| +(<)/, '\1\2').should == expectation.gsub(/(\r|\n)/, '').gsub(/> *</, '><').gsub(/(>) +| +(<)/, '\1\2')
   end
 
+  it 'should provide "hide_comments" method that will remove all comments from the string' do
+    input = <<HTML
+<span class="first">
+  <span class="top">
+    <span id="!hoho" class="test">
+    <!------ hello world! -->
+      <span data-remote="true" style="color: black;" class="tost">
+        data
+        <span>
+          <span class="yopo">
+            another text
+          </span>
+        </span>
+      </span>
+    <!-- another comment -->
+    </span>
+  </span>
+</span>
+HTML
+    expectation = <<HTML
+<span class="first">
+  <span class="top">
+    <span id="!hoho" class="test">
+      <span data-remote="true" style="color: black;" class="tost">
+        data
+        <span>
+          <span class="yopo">
+            another text
+          </span>
+        </span>
+      </span>
+    </span>
+  </span>
+</span>
+HTML
+    Onigiri::clean(input, :hide_comments).gsub(/(\r|\n)/, '').gsub(/> *</, '><').gsub(/(>) +| +(<)/, '\1\2').should == expectation.gsub(/(\r|\n)/, '').gsub(/> *</, '><').gsub(/(>) +| +(<)/, '\1\2')
+  end
 
   # Noted pending jobs.
   it 'should provide a "automerge_divs" method that will merge nested <div> such as "<div><div>...</div></div>" into top-level div moving inner <div>s attributes into outer one; however it shouldnt merge together <div>s that have valid id attributes (id attribute serves as a down-top merge breakpoint)' do
@@ -151,5 +188,4 @@ HTML
 
   #"drop-proprietary-attributes"=>true
   #"hide-comments"=>true,
-  #"char-encoding"=>"utf8", "output-bom" => 'n'
 end
