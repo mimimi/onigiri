@@ -4,12 +4,10 @@ module Onigiri
   class Document
     def fix_backslash
       dupe = dup
-      attrset = {'src' => 1, 'longdesc' => 1, 'href' => 1, 'action' => 1}
-      dupe.css("[#{attrset.keys.join('], [')}]").each do |target|
-        target.attributes.each_pair do |name, attribute|
-          if attrset[name]
-            attribute.value = attribute.value.gsub("\\", "/")
-          end
+      attrset = ['src', 'longdesc', 'href', 'action']
+      dupe.css("[#{attrset.join('], [')}]").each do |target|
+        attrset.each do |attr|
+          target[attr] = target[attr].gsub("\\", "/") if target[attr]
         end
       end
       dupe
