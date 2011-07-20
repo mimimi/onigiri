@@ -79,6 +79,12 @@ describe Onigiri do
     Onigiri::clean(input, :show_body_only).gsub(/(\r|\n)/, '').gsub(/> *</, '><').should == expectation
   end
 
+  it 'should not do anything with "show_body_only" if there is not body' do
+    input = 'some text<form>some text in form</form><p>some text in p</p><div><blockquote>some text in third level element</blockquote></div>'
+    expectation = 'some text<form>some text in form</form><p>some text in p</p><div><blockquote>some text in third level element</blockquote></div>'
+    Onigiri::clean(input, :show_body_only).gsub(/(\r|\n)/, '').gsub(/> *</, '><').should == expectation
+  end
+
   it 'should provide a "merge_divs" method that will merge nested <div> such as "<div><div>...</div></div>" into top-level div discarding inner <div>s attributes except for "class" and "style"' do
     input = <<HTML
 <div class="first">
