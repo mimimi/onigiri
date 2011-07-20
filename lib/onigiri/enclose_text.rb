@@ -5,9 +5,9 @@ module Onigiri
     def enclose_text
       dupe = dup
       dupe.css('body').children.each do |target|
-        if target.text?
-          target.add_previous_sibling "<p>#{target.content.strip}</p>"
-          target.unlink
+        if target.text? || target.description.inline?
+          wrap = target.add_previous_sibling("<p>")[0]
+          wrap << target.unlink
         end
       end
       dupe

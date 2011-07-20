@@ -29,6 +29,12 @@ describe Onigiri do
     Onigiri::clean(input, :enclose_text).gsub(/(\r|\n)/, '').gsub(/> *</, '><').should == expectation
   end
 
+  it 'should wrap inline elements with "enclose_text" method' do
+    input = '<body><span>some inline text</span><form>some text in form</form><p>some text in p</p><div><blockquote>some text in third level element</blockquote></div></body>'
+    expectation = '<body><p><span>some inline text</span></p><form>some text in form</form><p>some text in p</p><div><blockquote>some text in third level element</blockquote></div></body>'
+    Onigiri::clean(input, :enclose_text).gsub(/(\r|\n)/, '').gsub(/> *</, '><').should == expectation
+  end
+
   describe 'should define "fix_backslash" method that fixes "\" for "/" in urls' do
     it 'is fixing href attributes' do
       input = '<a href="http:\\\\google.com/">http:\\\\google.com/</a><link rel="stylesheet" type="text/css" href="http:\\\\bing.com\\">'
