@@ -91,9 +91,36 @@ HTML
 </div>
 HTML
     Onigiri::clean(input, :merge_divs).gsub(/(\r|\n)/, '').gsub(/> *</, '><').gsub(/(>) +| +(<)/, '\1\2').should == expectation.gsub(/(\r|\n)/, '').gsub(/> *</, '><').gsub(/(>) +| +(<)/, '\1\2')
-    Onigiri::clean(input, :merge_divs).gsub(/(\r|\n)/, '').gsub(/> *</, '><').gsub(/(>) +| +(<)/, '\1\2').should == expectation.gsub(/(\r|\n)/, '').gsub(/> *</, '><').gsub(/(>) +| +(<)/, '\1\2')
   end
 
+  it 'should provide a "merge_spans" method that replicates "merge_divs" for <span> tag' do
+    input = <<HTML
+<span class="first">
+  <span class="top">
+    <span id ="!hoho" class="test">
+      <span data-remote="true" style="color: black;" class="tost">
+        data
+        <span>
+          <span class="yopo">
+            another text
+          </span>
+        </span>
+      </span>
+    </span>
+  </span>
+</span>
+HTML
+    expectation = <<HTML
+<span class="first top test tost" style="color: black;">
+data
+<span class="yopo">another text</span>
+</span>
+HTML
+    Onigiri::clean(input, :merge_spans).gsub(/(\r|\n)/, '').gsub(/> *</, '><').gsub(/(>) +| +(<)/, '\1\2').should == expectation.gsub(/(\r|\n)/, '').gsub(/> *</, '><').gsub(/(>) +| +(<)/, '\1\2')
+  end
+
+
+  # Noted pending jobs.
   it 'should provide a "automerge_divs" method that will merge nested <div> such as "<div><div>...</div></div>" into top-level div moving inner <div>s attributes into outer one; however it shouldnt merge together <div>s that have valid id attributes (id attribute serves as a down-top merge breakpoint)' do
     input = <<HTML
 <div class="first">
@@ -123,6 +150,6 @@ HTML
   end
 
   #"drop-proprietary-attributes"=>true
-  #"merge-divs"=>"y", "merge-spans"=>"y", "hide-comments"=>true,
+  #"hide-comments"=>true,
   #"char-encoding"=>"utf8", "output-bom" => 'n'
 end
