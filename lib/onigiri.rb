@@ -24,7 +24,7 @@ module Onigiri
       def parse(tags)
         # Remove formatting whitespaces
         # Those do not represent any data while messing up the tree
-        tags = tags.gsub(/(\r|\n)/, '').gsub(/> *</, '><')
+        tags = tags.gsub(/(\r|\n)/, '').gsub(/> *</, '><') if tags.respond_to? :gsub
         super
       end
     end
