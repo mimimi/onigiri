@@ -4,6 +4,7 @@ Tidy-ext has nasty memory leaks, tends to crash and is incompatible with Ruby 1.
 So here I am trying to use a japanese saw to make some rice balls.
 
 What led me here:
+
 ```ruby
 if (RUBY_VERSION < '1.9')
   begin
